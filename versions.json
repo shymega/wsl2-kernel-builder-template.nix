@@ -1,0 +1,15 @@
+{
+  "kernels": [
+    {
+      "kernel": {
+        "tag": "linux-msft-wsl-6.6.36.6",
+        "sha256": "0sjkj939h47yi2n4kn5058k6qrpl5xipxdf1nl3r96d5xarxjcpa"
+      },
+      "modules": {
+        "zfs": {
+          "tag": "zfs-2.2.6"
+        }
+      }
+    }
+  ]
+}

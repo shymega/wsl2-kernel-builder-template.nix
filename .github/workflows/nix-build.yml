@@ -1,9 +1,7 @@
-name: "Nix build"
+name: Nix CI workflow
 on:
   pull_request:
   push:
-env:
-  CACHIX_REPO_NAME: "wsl2-linux-kernel-package-template"
 jobs:
   checks:
     runs-on: ubuntu-latest
@@ -11,7 +9,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: cachix/install-nix-action@V28
     - uses: cachix/cachix-action@v15
-      if: false
+      if: false # To be enabled on each downstream (from template) repository.
       with:
         name: ${{ env.CACHIX_REPO_NAME }}
         authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
@@ -19,11 +17,11 @@ jobs:
 
   shell:
     runs-on: ubuntu-latest
+    if: false # To be enabled on each downstream (from template) repository.
     steps:
     - uses: actions/checkout@v4
     - uses: cachix/install-nix-action@V28
     - uses: cachix/cachix-action@v15
-      if: false
       with:
         name: ${{ env.CACHIX_REPO_NAME }}
         authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
@@ -31,11 +29,11 @@ jobs:
 
   wsl2-linux-kernel:
     runs-on: ubuntu-latest
+    if: false # To be enabled on each downstream (from template) repository.
     steps:
     - uses: actions/checkout@v4
     - uses: cachix/install-nix-action@V28
     - uses: cachix/cachix-action@v15
-      if: false
       with:
         name: ${{ env.CACHIX_REPO_NAME }}
         authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}

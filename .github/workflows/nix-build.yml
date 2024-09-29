@@ -14,7 +14,7 @@ jobs:
       if: false
       with:
         name: ${{ env.CACHIX_REPO_NAME }}
-        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+        authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
     - run: nix flake check --print-build-logs
 
   shell:
@@ -26,7 +26,7 @@ jobs:
       if: false
       with:
         name: ${{ env.CACHIX_REPO_NAME }}
-        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+        authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
     - run: nix build .#devShells.x86_64-linux.default --print-build-logs
 
   wsl2-linux-kernel:
@@ -38,5 +38,5 @@ jobs:
       if: false
       with:
         name: ${{ env.CACHIX_REPO_NAME }}
-        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+        authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
     - run: nix build .#packages.x86_64-linux.wsl2-linux-kernel --print-build-logs

@@ -43,6 +43,6 @@ stdenv.mkDerivation {
       "arm64"
       else if arch == "amd64" then
         "x86"
-      else throw "This error shouldn't happen - please open a bug report"}/boot/bzImage $out/bzImage
+      else throw "This error shouldn't happen - please open a bug report"}/boot/bzImage $out/bzImage-${arch}
   '';
 }

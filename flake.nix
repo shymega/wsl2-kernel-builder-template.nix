@@ -53,7 +53,8 @@
             [
               zlib
             ]
-            ++ self.checks.${system}.formatting.enabledPackages;
+            ++ self.checks.${system}.formatting.enabledPackages
+            ++ self.packages.${system}.wsl2-linux-kernel;
         };
       in
       {
@@ -61,9 +62,9 @@
           default = devShell;
         };
 
-        packages = rec {
-          wsl-linux-kernel = pkgs.callPackage ./wsl2-linux-kernel.nix { };
-          default = wsl-linux-kernel;
+        packages = {
+          wsl2-linux-kernel = pkgs.callPackage ./packages/wsl2-linux-kernel { };
+          default = self.packages.${system}.wsl2-linux-kernel;
         };
 
         checks = {
@@ -71,7 +72,7 @@
         };
       }) // {
       overlays.default = final: prev: {
-        inherit (nixpkgs.legacyPackages.${final.system}) hello; # Dummy for now.
+        inherit (nixpkgs.legacyPackages.${final.system}) wsl2-linux-kernel; # Dummy for now.
       };
     };
 }

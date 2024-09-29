@@ -39,7 +39,7 @@ stdenv.mkDerivation {
       "arm64"
       else if arch == "amd64" then
         "x86"
-      else throw "Unsupported system ${pkgs.system}"}
+      else throw "This error shouldn't happen - please open a bug report"}
     /boot/bzImage
   '';
 }

@@ -4,7 +4,7 @@
 , stdenv
 }:
 let
-  name = "wsl2-linux-kernel";
+  wsl2-linux-kernel-base = import ../wsl2-linux-kernel-base { inherit pkgs lib; };
   kernelTag = builtins.substring 15 24 "linux-msft-wsl-6.6.36.6";
   kernelSha256 = "0sjkj939h47yi2n4kn5058k6qrpl5xipxdf1nl3r96d5xarxjcpa";
   kernelZfsTag = builtins.substring 4 10 "zfs-2.2.6";
@@ -17,7 +17,7 @@ let
     else
       throw "Unsupported system ${pkgs.system}";
 
-  mkBaseKernel = (import ../wsl2-linux-kernel-base { inherit pkgs lib; }).mkBaseKernel;
+  inherit (wsl2-linux-kernel-base) mkBaseKernel;
 
   version = "kv${kernelTag}-zfsv${kernelZfsTag}";
 
@@ -48,17 +48,16 @@ let
   };
 
   kernel = mkBaseKernel {
-    inherit name src extraConfig;
+    inherit src extraConfig;
     version = kernelTag;
   };
 in
 stdenv.mkDerivation {
-  name = "linux-WSL2-kernel-with-zfs";
+  name = "wsl2-linux-kernel-with-zfs";
   inherit version src;
 
   makeFlags = [ "KCONFIG_CONFIG=Microsoft/config-wsl" ];
-  nativeBuildInputs = kernel.nativeBuildInputs;
-  buildInputs = kernel.buildInputs;
+  inherit (kernel) nativeBuildInputs buildInputs;
 
   enableParallelBuilding = true;
 

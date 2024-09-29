@@ -52,9 +52,8 @@
           buildInputs = with pkgs;
             [
               zlib
-            ]
-            ++ self.checks.${system}.formatting.enabledPackages
-            ++ self.packages.${system}.wsl2-linux-kernel;
+            ] ++ self.checks.${system}.formatting.enabledPackages;
+          inputsFrom = [ self.packages.${system}.wsl2-linux-kernel ];
         };
       in
       {

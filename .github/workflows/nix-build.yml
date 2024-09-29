@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: cachix/install-nix-action@V28
+    - uses: cachix/install-nix-action@v29
     - uses: cachix/cachix-action@v15
       if: false # To be enabled on each downstream (from template) repository.
       with:
@@ -20,7 +20,7 @@ jobs:
     if: false # To be enabled on each downstream (from template) repository.
     steps:
     - uses: actions/checkout@v4
-    - uses: cachix/install-nix-action@V28
+    - uses: cachix/install-nix-action@v29
     - uses: cachix/cachix-action@v15
       with:
         name: ${{ env.CACHIX_REPO_NAME }}
@@ -32,7 +32,7 @@ jobs:
     if: false # To be enabled on each downstream (from template) repository.
     steps:
     - uses: actions/checkout@v4
-    - uses: cachix/install-nix-action@V28
+    - uses: cachix/install-nix-action@v29
     - uses: cachix/cachix-action@v15
       with:
         name: ${{ env.CACHIX_REPO_NAME }}

@@ -1,0 +1,77 @@
+{ pkgs
+, fetchFromGitHub
+, lib
+, stdenv
+}:
+let
+  name = "wsl2-linux-kernel";
+  kernelTag = builtins.substring 15 24 "linux-msft-wsl-6.6.36.6";
+  kernelSha256 = "0sjkj939h47yi2n4kn5058k6qrpl5xipxdf1nl3r96d5xarxjcpa";
+  kernelZfsTag = builtins.substring 4 10 "zfs-2.2.6";
+
+  arch =
+    if pkgs.system == "aarch64-linux" then
+      "arm64"
+    else if pkgs.system == "x86_64-linux" then
+      "amd64"
+    else
+      throw "Unsupported system ${pkgs.system}";
+
+  mkBaseKernel = (import ../wsl2-linux-kernel-base { inherit pkgs lib; }).mkBaseKernel;
+
+  version = "kv${kernelTag}-zfsv${kernelZfsTag}";
+
+  src = fetchFromGitHub {
+    owner = "Microsoft";
+    repo = "WSL2-Linux-Kernel";
+    rev = kernelTag;
+    sha256 = kernelSha256;
+  };
+
+  extraConfig = with lib.kernel;{
+    CONFIG_KERNEL_ZSTD = yes;
+
+    CONFIG_MODULE_COMPRESS_ZSTD = yes;
+
+    CONFIG_ZPOOL = yes;
+    CONFIG_ZSWAP = yes;
+    CONFIG_ZSWAP_COMPRESSOR_DEFAULT_ZSTD = yes;
+
+    CONFIG_CRYPTO_842 = module;
+    CONFIG_CRYPTO_LZ4 = module;
+    CONFIG_CRYPTO_LZ4HC = module;
+    CONFIG_CRYPTO_ZSTD = yes;
+
+    CONFIG_ZRAM_DEF_COMP_ZSTD = yes;
+    CONFIG_ZRAM_WRITEBACK = yes;
+    CONFIG_ZRAM_MULTI_COMP = yes;
+  };
+
+  kernel = mkBaseKernel {
+    inherit name src extraConfig;
+    version = kernelTag;
+  };
+in
+stdenv.mkDerivation {
+  name = "linux-WSL2-kernel-with-zfs";
+  inherit version src;
+
+  makeFlags = [ "KCONFIG_CONFIG=Microsoft/config-wsl" ];
+  nativeBuildInputs = kernel.nativeBuildInputs;
+  buildInputs = kernel.buildInputs;
+
+  enableParallelBuilding = true;
+
+  postPatch = ''
+    patchShebangs ./scripts/bpf_doc.py;
+  '';
+
+  installPhase = ''
+    mkdir -p $out
+    cp arch/${if arch == "arm64" then
+      "arm64"
+      else if arch == "amd64" then
+        "x86"
+      else throw "This error shouldn't happen - please open a bug report"}/boot/bzImage $out/bzImage-${arch}
+  '';
+}

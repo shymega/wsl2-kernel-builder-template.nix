@@ -53,7 +53,7 @@
             [
               zlib
             ] ++ self.checks.${system}.formatting.enabledPackages;
-          inputsFrom = [ self.packages.${system}.wsl2-linux-kernel ];
+          inputsFrom = [ self.packages.${system}.wsl2-linux-kernel-base ];
         };
       in
       {
@@ -62,8 +62,9 @@
         };
 
         packages = {
-          wsl2-linux-kernel = pkgs.callPackage ./packages/wsl2-linux-kernel { };
-          default = self.packages.${system}.wsl2-linux-kernel;
+          wsl2-linux-kernel-base = import ./packages/wsl2-linux-kernel-base { inherit pkgs; inherit (pkgs) lib; };
+          wsl2-linux-kernel-with-zfs = pkgs.callPackage ./packages/wsl2-linux-kernel-with-zfs { };
+          default = self.packages.${system}.wsl2-linux-kernel-base;
         };
 
         checks = {
@@ -71,7 +72,7 @@
         };
       }) // {
       overlays.default = final: prev: {
-        inherit (nixpkgs.legacyPackages.${final.system}) wsl2-linux-kernel; # Dummy for now.
+        inherit (self.packages.${final.system}) wsl2-linux-kernel-base wsl2-linux-kernel-with-zfs;
       };
     };
 }

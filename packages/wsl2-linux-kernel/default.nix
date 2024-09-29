@@ -33,6 +33,10 @@ stdenv.mkDerivation {
 
   enableParallelBuilding = true;
 
+  postPatch = ''
+    patchShebangs ./scripts/bpf_doc.py;
+  '';
+
   installPhase = ''
     mkdir -p $out
     cp arch/${if arch == "arm64" then
